@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const PUBLIC_FILE = /\.(.*)$/
-
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+  const PUBLIC_FILE = /\.(.*)$/
 
   if (
     pathname.startsWith('/_next') ||
@@ -16,6 +15,10 @@ export function middleware(req: NextRequest) {
   }
 
   const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en'
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL(`/${locale}/home`, req.url))
+  }
+
   if (!pathname.startsWith(`/${locale}`)) {
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url))
   }
