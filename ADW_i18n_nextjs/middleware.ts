@@ -14,11 +14,15 @@ export function middleware(req: NextRequest) {
     return
   }
 
+  // Cookie からロケールを取得（なければ英語）
   const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en'
+
+  // "/" の場合はホームページへ自動リダイレクト
   if (pathname === '/') {
     return NextResponse.redirect(new URL(`/${locale}/home`, req.url))
   }
 
+  // 他のパスがロケールを含まない場合も補完
   if (!pathname.startsWith(`/${locale}`)) {
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url))
   }
