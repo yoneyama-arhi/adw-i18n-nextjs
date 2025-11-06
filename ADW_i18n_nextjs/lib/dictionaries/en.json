@@ -1,0 +1,30 @@
+{
+  "brandTagline": "Luxury Faux Florals & Botanicals",
+  "nav": {
+    "collections": "Collections",
+    "about": "About",
+    "contact": "Contact",
+    "language": "Language"
+  },
+  "hero": {
+    "title": "ADW — Modern Luxury Faux Florals",
+    "subtitle": "Museum-grade faux arrangements for fashion-forward interiors.",
+    "ctaShop": "Shop Now",
+    "ctaCustom": "Bespoke Service"
+  },
+  "home": {
+    "featured": "Featured",
+    "bestsellers": "Bestsellers",
+    "new": "New Arrivals"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "chooser": {
+    "title": "Choose your language",
+    "en": "English",
+    "ja": "日本語",
+    "zh": "中文",
+    "continue": "Continue"
+  }
+}

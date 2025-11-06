@@ -1,0 +1,30 @@
+{
+  "brandTagline": "ラグジュアリー造花 & ボタニカル",
+  "nav": {
+    "collections": "コレクション",
+    "about": "私たちについて",
+    "contact": "お問い合わせ",
+    "language": "言語"
+  },
+  "hero": {
+    "title": "ADW — モダンでラグジュアリーな造花",
+    "subtitle": "ファッション感度の高い空間のための、ミュージアムクオリティのアレンジ。",
+    "ctaShop": "今すぐ見る",
+    "ctaCustom": "オーダーメイド"
+  },
+  "home": {
+    "featured": "注目商品",
+    "bestsellers": "ベストセラー",
+    "new": "新着"
+  },
+  "footer": {
+    "rights": "無断転載禁止。"
+  },
+  "chooser": {
+    "title": "言語を選択してください",
+    "en": "English",
+    "ja": "日本語",
+    "zh": "中文",
+    "continue": "続ける"
+  }
+}

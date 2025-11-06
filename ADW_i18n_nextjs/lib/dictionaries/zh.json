@@ -1,0 +1,30 @@
+{
+  "brandTagline": "高端仿真花与植物",
+  "nav": {
+    "collections": "系列",
+    "about": "关于我们",
+    "contact": "联系",
+    "language": "语言"
+  },
+  "hero": {
+    "title": "ADW — 现代奢华仿真花",
+    "subtitle": "为时尚空间打造的博物馆级仿真花艺。",
+    "ctaShop": "立即选购",
+    "ctaCustom": "定制服务"
+  },
+  "home": {
+    "featured": "精选",
+    "bestsellers": "畅销",
+    "new": "新品"
+  },
+  "footer": {
+    "rights": "版权所有。"
+  },
+  "chooser": {
+    "title": "选择语言",
+    "en": "English",
+    "ja": "日本語",
+    "zh": "中文",
+    "continue": "继续"
+  }
+}
