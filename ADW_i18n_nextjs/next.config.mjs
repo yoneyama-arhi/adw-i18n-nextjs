@@ -1,11 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  experimental: { typedRoutes: true },
   i18n: {
     locales: ['en', 'ja', 'zh'],
     defaultLocale: 'en',
-    localeDetection: true
-  }
+    localeDetection: false,  
+  },
+  reactStrictMode: true,
 };
 export default nextConfig;
