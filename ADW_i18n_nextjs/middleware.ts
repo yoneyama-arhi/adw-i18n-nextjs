@@ -1,68 +1,56 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+// app 直下ではなく、プロジェクトのルートにある middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
 
-const SUPPORTED = ['en', 'ja', 'zh'] as const;
+const LOCALES = ['en', 'ja', 'zh'] as const;
+const PUBLIC_FILE = /\.(?:ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|map|txt)$/i;
 
-/**
- * 振る舞い:
- * - /            → /en/home（Cookie NEXT_LOCALE があればその言語）に 1 回だけリダイレクト
- * - /about       → /en/about（同上）
- * - /en          → /en/home に 1 回だけリダイレクト
- * - /_next/* /api/* や拡張子付き（画像/CSS/JS など）は素通し
- */
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1) 静的/内部/拡張子付きは素通し
+  // 静的系・内部パスは対象外にする（無限ループ防止）
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
-    /\.(?:ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|map|txt)$/.test(pathname)
+    PUBLIC_FILE.test(pathname)
   ) {
     return NextResponse.next();
   }
 
-  // 2) クッキーの言語（無ければ en）
+  // Cookie から希望言語。なければ 'en'
   const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value ?? 'en';
-  const locale = SUPPORTED.includes(cookieLocale as any) ? cookieLocale : 'en';
+  const locale = LOCALES.includes(cookieLocale as any) ? cookieLocale : 'en';
 
-  // 3) すでにロケール付きのパスか？
-  const hasLocalePrefix = SUPPORTED.some(
+  // すでに言語プレフィックスが付いているか？
+  const hasLocalePrefix = LOCALES.some(
     (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`)
   );
 
-  // 3-1) /en → /en/home（/ja, /zh も同様）
+  // `/` は `${locale}/home` に一度だけ送る
+  if (pathname === '/' || pathname === '') {
+    return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
+  }
+
+  // `/en` → `/en/home`（言語だけのパスはホームへ）
   if (hasLocalePrefix) {
-    for (const l of SUPPORTED) {
+    for (const l of LOCALES) {
       if (pathname === `/${l}`) {
-        const url = req.nextUrl.clone();
-        url.pathname = `/${l}/home`;
-        return NextResponse.redirect(url);
+        return NextResponse.redirect(new URL(`/${l}/home`, req.url));
       }
     }
-    // すでに /{locale}/... ならそのまま通す
+    // `/en/home` や `/en/about` などはそのまま通す
     return NextResponse.next();
   }
 
-  // 4) ロケール無しのとき
-  const url = req.nextUrl.clone();
-
-  // 4-1) ルート / は /{locale}/home へ
-  if (pathname === '/') {
-    url.pathname = `/${locale}/home`;
-    return NextResponse.redirect(url);
-  }
-
-  // 4-2) それ以外は同パス頭にロケールを付与
-  url.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(url);
+  // それ以外（`/about`, `/home` など）には言語を付けて一度だけ送る
+  return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
 }
 
 /**
- * 追加のマッチャ（任意）:
- * すべて通した上で静的はコード側で除外しているので省略可。
- * きっちり絞る場合は以下のように設定:
+ * middleware を当てる対象を限定（ここが無いと全部に当たりループしやすい）
+ * 画像/CSS/JS、_next、api は除外
  */
-// export const config = {
-//   matcher: ['/((?!_next/|api/|.*\\.(?:ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|map|txt)$).*)'],
-// };
+export const config = {
+  matcher: [
+    '/((?!_next/|api/|favicon.ico|.*\\.(?:ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|map|txt)$).*)',
+  ],
+};
