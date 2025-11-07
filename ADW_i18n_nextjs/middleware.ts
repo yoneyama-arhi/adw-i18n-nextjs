@@ -49,10 +49,7 @@ export function middleware(req: NextRequest) {
   return NextResponse.redirect(url)
 }
 
-// 5) middleware を当てる対象（静的/内部パスを完全除外）
 export const config = {
-  matcher: [
-    // 先頭が _next / api / favicon.ico 以外、かつ拡張子付き静的ファイル以外
-    '/((?!_next|api|favicon.ico).*)(?<!\\.\\w+$)'
-  ],
-}
+  // Next.js 内部や API、favicon はマッチ対象外
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};
