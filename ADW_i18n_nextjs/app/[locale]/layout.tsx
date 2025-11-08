@@ -1,4 +1,4 @@
-'use client';
+
 // app/[locale]/layout.tsx（抜粋・イメージ）
 import './globals.css';
 import type { ReactNode } from 'react';
