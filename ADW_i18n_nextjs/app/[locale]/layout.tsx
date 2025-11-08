@@ -1,10 +1,10 @@
-// app/[locale]/layout.tsx（抜粋・イメージ）
+// app/[locale]/layout.tsx（抜粋）
 import './globals.css';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { dictionaries, type Locale } from '@/lib/dictionary';
-import LanguageSwitcher from '@/components/LanguageSwitcher'; // ← これを使う
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function RootLayout({
   children,
@@ -21,19 +21,18 @@ export default function RootLayout({
     <html lang={locale}>
       <body>
         <header>
-          {/* …中略… */}
+          {/* 省略 */}
           <nav className="flex items-center gap-6 text-sm">
             <Link href={`/${locale}/collections`} className="no-underline">{t.nav.collections}</Link>
             <Link href={`/${locale}/about`} className="no-underline">{t.nav.about}</Link>
             <Link href={`/${locale}/contact`} className="no-underline">{t.nav.contact}</Link>
 
-            {/* ← onClick を持つのはこの Client Component だけ */}
+            {/* ← 関数 props を渡さず、置くだけ */}
             <LanguageSwitcher locale={locale} />
           </nav>
         </header>
 
         {children}
-        {/* …中略… */}
       </body>
     </html>
   );
