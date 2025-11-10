@@ -1,2 +1,5 @@
-cd ADW_i18n_nextjs
-grep -Rn "globals.css" app
+import type { ReactNode } from 'react';
+
+export default function LocaleLayout({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
