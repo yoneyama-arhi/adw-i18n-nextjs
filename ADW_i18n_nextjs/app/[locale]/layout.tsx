@@ -1,5 +1,5 @@
 // app/[locale]/layout.tsx（抜粋）
-import './globals.css';
+
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
