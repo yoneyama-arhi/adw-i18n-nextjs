@@ -17,3 +17,13 @@ a { @apply underline; }
 .badge { @apply inline-block rounded-full px-3 py-1 text-sm border; }
 .grid-cards { @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6; }
 .hero { @apply pt-20 pb-16; }
+/* ==== Global Typography Fine-tuning ==== */
+
+/* 全体の文字間をほんの少し詰める */
+body {
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+  font-smooth: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
