@@ -7,7 +7,6 @@ const LOCALES = ['en', 'ja', 'zh'] as const;
 type Locale = typeof LOCALES[number];
 
 function setLocaleCookie(locale: Locale) {
-  // 30日保持
   document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${60 * 60 * 24 * 30}`;
 }
 
@@ -15,9 +14,8 @@ export default function LanguageSwitcher() {
   const pathname = usePathname() || '/';
   const router = useRouter();
 
-  // 先頭のロケールと、残りのパスを取得
   const { currentLocale, restPath } = useMemo(() => {
-    const parts = pathname.split('/').filter(Boolean); // '' を除去
+    const parts = pathname.split('/').filter(Boolean);
     const maybeLocale = (parts[0] || 'en') as Locale;
     const isLocale = LOCALES.includes(maybeLocale);
     return {
@@ -28,12 +26,11 @@ export default function LanguageSwitcher() {
 
   const switchTo = (next: Locale) => {
     setLocaleCookie(next);
-    const target = `/${next}/${restPath || 'home'}`;
-    router.push(target);
+    router.push(`/${next}/${restPath || 'home'}`);
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex gap-2">
       {LOCALES.map((l) => {
         const active = l === currentLocale;
         return (
@@ -41,12 +38,11 @@ export default function LanguageSwitcher() {
             key={l}
             onClick={() => switchTo(l)}
             className={
-              `px-2 py-1 rounded-lg text-sm ` +
+              'px-2 py-1 rounded-md text-sm transition ' +
               (active
                 ? 'bg-black text-white'
-                : 'bg-transparent text-gray-600 hover:bg-gray-100')
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200')
             }
-            aria-current={active ? 'page' : undefined}
           >
             {l.toUpperCase()}
           </button>
