@@ -10,13 +10,13 @@ export default function Header() {
   const currentLocale = ['en', 'ja', 'zh'].includes(segments[0]) ? segments[0] : 'en';
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 border-b">
-      {/* ロゴ部分 */}
+    <header className="flex items-center justify-between px-6 py-4 border-b bg-white">
+      {/* ロゴ */}
       <div className="text-2xl font-bold">
         <Link href={`/${currentLocale}/home`}>ADW</Link>
       </div>
 
-      {/* ナビゲーションリンク */}
+      {/* ナビ */}
       <nav className="flex gap-6 text-sm font-medium">
         <Link href={`/${currentLocale}/collections`} className="hover:text-gray-500">
           Collections
@@ -29,7 +29,7 @@ export default function Header() {
         </Link>
       </nav>
 
-      {/* 言語切り替えボタン */}
+      {/* 言語スイッチ */}
       <LanguageSwitcher />
     </header>
   );
