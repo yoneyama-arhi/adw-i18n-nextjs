@@ -1,55 +1,65 @@
-// /middleware.ts（プロジェクト直下）
-import { NextRequest, NextResponse } from 'next/server'
+// ADW_i18n_nextjs/middleware.ts
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-const LOCALES = ['en', 'ja', 'zh'] as const
-type Locale = typeof LOCALES[number]
-
-// 静的ファイル・Next の内部パスを完全に素通り
-const PUBLIC_FILE = /\.(?:ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|map|txt)$/i
+const locales = ['en', 'ja', 'zh'] as const;
+const defaultLocale = 'en' as const;
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl
+  const { pathname } = req.nextUrl;
 
-  // 1) 素通りルート
+  // ------------- バイパス（静的ファイルは通す） -------------
+  // _next や画像、アイコン、sitemap などはミドルウェア対象外
   if (
-    pathname.startsWith('/_next') ||     // Next の内部アセット
-    pathname.startsWith('/api') ||       // API ルート
-    PUBLIC_FILE.test(pathname)           // 画像/CSS/JS 等
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/images') || // ← これが重要
+    pathname === '/favicon.ico' ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/apple-touch-icon.png' ||
+    pathname === '/manifest.webmanifest' ||
+    // 拡張子付き（.jpg/.png/.css/.js/フォント等）は全部バイパス
+    /\.(?:png|jpe?g|gif|webp|svg|ico|txt|xml|json|map|css|js|woff2?|ttf)$/i.test(pathname)
   ) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
-  // 2) クッキーから希望言語（不正なら 'en'）
-  const cookieLocale = req.cookies.get('NEXT_LOCALE')?.value
-  const hasValidCookie = LOCALES.includes(cookieLocale as any)
-  const locale: Locale = (hasValidCookie ? cookieLocale : 'en') as Locale
-
-  // 3) すでに /{locale} で始まるか？
-  const hasLocalePrefix = LOCALES.some(l => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
-
-  // 3-1) /en など言語トップは /en/home に 1 回だけ
-  if (hasLocalePrefix) {
-    for (const l of LOCALES) {
-      if (pathname === `/${l}`) {
-        const url = req.nextUrl.clone()
-        url.pathname = `/${l}/home`
-        return NextResponse.redirect(url) // ← ここで 1 回だけ
-      }
-    }
-    return NextResponse.next() // /en/home, /en/about 等はそのまま
+  // ------------- i18n リダイレクト -------------
+  // "/" → "/en/home"
+  if (pathname === '/') {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${defaultLocale}/home`;
+    return NextResponse.redirect(url);
   }
 
-  // 4) 言語プレフィックスが無いときだけ 1 回だけ付ける
-  const url = req.nextUrl.clone()
-  if (pathname === '/' || pathname === '') {
-    url.pathname = `/${locale}/home`
-  } else {
-    url.pathname = `/${locale}${pathname}`
+  // "/en" | "/ja" | "/zh" → "/{locale}/home"
+  if (locales.some((l) => pathname === `/${l}`)) {
+    const l = pathname.slice(1);
+    const url = req.nextUrl.clone();
+    url.pathname = `/${l}/home`;
+    return NextResponse.redirect(url);
   }
-  return NextResponse.redirect(url)
+
+  // "/about" などロケール無しのトップレベルは defaultLocale を付与
+  const noLocale = ['about', 'contact', 'collections'] as const;
+  if (noLocale.some((s) => pathname === `/${s}` || pathname.startsWith(`/${s}/`))) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${defaultLocale}${pathname}`;
+    return NextResponse.redirect(url);
+  }
+
+  // 既にロケール付きのパスはそのまま通過
+  const first = pathname.split('/')[1];
+  if ((locales as readonly string[]).includes(first)) {
+    return NextResponse.next();
+  }
+
+  return NextResponse.next();
 }
 
+// ミドルウェアの適用対象（静的系は除外）
 export const config = {
-  // Next.js 内部や API、favicon はマッチ対象外
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next|images|favicon.ico|robots.txt|sitemap.xml|apple-touch-icon.png|manifest.webmanifest).*)',
+  ],
 };
