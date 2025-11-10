@@ -1,35 +1,36 @@
 'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
 
-const LOCALES = ['en','ja','zh'] as const;
-type L = typeof LOCALES[number];
-
-function useLocaleFromPath(): L {
-  const segs = (usePathname() || '/').split('/').filter(Boolean);
-  const l = segs[0];
-  return (LOCALES as readonly string[]).includes(l) ? (l as L) : 'en';
-}
-
 export default function Header() {
-  const locale = useLocaleFromPath();
+  const pathname = usePathname() || '/';
+  const segments = pathname.split('/').filter(Boolean);
+  const currentLocale = ['en', 'ja', 'zh'].includes(segments[0]) ? segments[0] : 'en';
 
   return (
-    <header className="flex items-center justify-between p-4 border-b">
-      <div className="text-xl font-bold">
-        <Link href={`/${locale}/home`}>ADW</Link>
+    <header className="flex items-center justify-between px-6 py-4 border-b">
+      {/* ロゴ部分 */}
+      <div className="text-2xl font-bold">
+        <Link href={`/${currentLocale}/home`}>ADW</Link>
       </div>
 
-      <nav className="flex gap-4">
-        <Link href={`/${locale}/collections`}>Collections</Link>
-        <Link href={`/${locale}/about`}>About</Link>
-        <Link href={`/${locale}/contact`}>Contact</Link>
+      {/* ナビゲーションリンク */}
+      <nav className="flex gap-6 text-sm font-medium">
+        <Link href={`/${currentLocale}/collections`} className="hover:text-gray-500">
+          Collections
+        </Link>
+        <Link href={`/${currentLocale}/about`} className="hover:text-gray-500">
+          About
+        </Link>
+        <Link href={`/${currentLocale}/contact`} className="hover:text-gray-500">
+          Contact
+        </Link>
       </nav>
 
-      {/* 言語ボタン（EN/JA/ZH） */}
+      {/* 言語切り替えボタン */}
       <LanguageSwitcher />
     </header>
   );
 }
-
